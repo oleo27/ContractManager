@@ -1,0 +1,28 @@
+﻿@model IEnumerable<ContractManager.Models.Dyspozycja>
+
+<h2>Lista dyspozycji</h2>
+
+<p>
+    <a asp-action="Create" class="btn btn-primary">Dodaj nową dyspozycję</a>
+</p>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Numer umowy</th>
+            <th>Data złożenia dyspozycji</th>
+            <th>Użytkownik</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.NumerUmowy</td>
+                <td>@item.DataDyspozycji.ToString("yyyy-MM-dd")</td>
+                <td>@item.Uzytkownik</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
