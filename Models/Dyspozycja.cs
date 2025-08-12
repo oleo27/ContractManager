@@ -15,5 +15,7 @@ namespace ContractManager.Models
 
 		[Display(Name = "Użytkownik")]
 		public required string Uzytkownik { get; set; }
+
+		public bool Checked { get; set; } = false;
 	}
 }

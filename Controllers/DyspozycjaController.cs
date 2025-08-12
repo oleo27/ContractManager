@@ -1,6 +1,7 @@
 ﻿using ContractManager.Data;
 using ContractManager.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding.Binders;
 using Microsoft.EntityFrameworkCore;
 
 namespace ContractManager.Controllers
@@ -16,10 +17,22 @@ namespace ContractManager.Controllers
 
 		public async Task<IActionResult> Index()
 		{
-
 			var dyspozycje = await _context.Dyspozycje.ToListAsync();
 
 			return View(dyspozycje);
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> OznaczJakoSprawdzone(int id)
+		{
+			var dyspozycja = await _context.Dyspozycje.FindAsync(id);
+			if (dyspozycja != null)
+			{
+				dyspozycja.Checked = true;
+				await _context.SaveChangesAsync();
+			}
+			return RedirectToAction(nameof(Index));
 		}
 
 		public IActionResult Create()

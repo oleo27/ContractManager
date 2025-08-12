@@ -1,28 +1,55 @@
 ﻿@model IEnumerable<ContractManager.Models.Dyspozycja>
 
-<h2>Lista dyspozycji</h2>
+@{
+    var teraz = DateTime.Now;
+    var cutoff = teraz.AddDays(-30);
 
-<p>
-    <a asp-action="Create" class="btn btn-primary">Dodaj nową dyspozycję</a>
-</p>
+    var wyroznione = Model
+        .Where(d => d.DataDyspozycji <= cutoff && !d.Checked)
+        .OrderBy(d => d.DataDyspozycji)
+        .ToList();
 
-<table class="table table-striped">
-    <thead>
+    var pozostale = Model
+        .Where(d => d.DataDyspozycji > cutoff || d.Checked)
+        .OrderByDescending(d => d.DataDyspozycji)
+        .ToList();
+}
+
+<h2>Wymagają uwagi</h2>
+<table class="table">
+    <tr>
+        <th>Umowa</th>
+        <th>Data złożenia</th>
+        <th>Akcja</th>
+    </tr>
+    @foreach (var d in wyroznione)
+    {
         <tr>
-            <th>Numer umowy</th>
-            <th>Data złożenia dyspozycji</th>
-            <th>Użytkownik</th>
+            <td>@d.NumerUmowy</td>
+            <td>@d.DataDyspozycji.ToShortDateString()</td>
+            <td>
+                <form asp-action="OznaczJakoSprawdzone" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@d.Id" />
+                    <input type="checkbox" onchange="this.form.submit()" />
+                </form>
+            </td>
         </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.NumerUmowy</td>
-                <td>@item.DataDyspozycji.ToString("yyyy-MM-dd")</td>
-                <td>@item.Uzytkownik</td>
-            </tr>
-        }
-    </tbody>
+    }
+</table>
+
+<h2>Pozostałe</h2>
+<table class="table">
+    <tr>
+        <th>Umowa</th>
+        <th>Data złożenia</th>
+    </tr>
+    @foreach (var d in pozostale)
+    {
+        <tr>
+            <td>@d.NumerUmowy</td>
+            <td>@d.DataDyspozycji.ToShortDateString()</td>
+        </tr>
+    }
 </table>
 
